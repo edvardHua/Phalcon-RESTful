@@ -1,0 +1,13 @@
+### Example user template template
+### Example user template
+
+# IntelliJ project files
+.idea
+*.iml
+out
+gen### Phalcon template
+/cache/
+/config/development/
+v1.0/logs/debug.log
+
+# Created by .ignore support plugin (hsz.mobi)

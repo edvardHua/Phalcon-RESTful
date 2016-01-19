@@ -1,0 +1,11 @@
+AddDefaultCharset UTF-8
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+#    RewriteCond %{REQUEST_FILENAME} !-f
+#    RewriteRule ^(.*)$ index.php?_url=/$1 [QSA,L]
+    RewriteCond  %{HTTP_ACCEPT}  api-version=(([0-9]+\.)+[0-9]+)
+    RewriteRule ^(.+)$ - [env=v:%1]
+    RewriteCond  %{HTTP_ACCEPT}  api-version=(([0-9]+\.)+[0-9]+)
+    RewriteRule  ^(.*)$   v%{ENV:v}/index.php?_url=/$1 [QSA,L]
+</IfModule>
