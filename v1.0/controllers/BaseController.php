@@ -235,7 +235,7 @@ class BaseController extends Controller
      * @param $eventId
      * @return bool 返回false表示生成失败，否则返回sessionId
      */
-    protected function obtainToken($userId, $orgId, $eventId, $role)
+    protected function obtainToken($userId, $role)
     {
         session_start();
         session_regenerate_id();
@@ -245,19 +245,14 @@ class BaseController extends Controller
         $token->expire = time() + self::$expire;
         $token->create_time = time();
         $token->token = $sessionId;
-        $token->event_id = $eventId;
         $token->user_id = $userId;
-        $token->org_id = $orgId;
 
         switch($role){
-            case 5:
+            case 1:
                 $token->auth = 'Admin';
                 break;
-            case 6:
-                $token->auth = 'Organizer';
-                break;
-            case 9:
-                $token->auth = 'Scanner';
+            case 2:
+                $token->auth = 'User';
                 break;
         }
 
@@ -284,12 +279,14 @@ class BaseController extends Controller
         $token = $request->getHeader('token');
 
         if (!empty($token)) {
-//            $tokenModel = new Token();
-//            $dbToken = $tokenModel->findToken($token);
             session_id($token);
             $cacheToken = json_decode($this->session->get('token')); //从缓存中取得token
-            if (null == $cacheToken)
-                return false;
+            if (null == $cacheToken){
+                $tokenModel = new Token(); // 避免缓存失效，再去数据库里面拿
+                $cacheToken = $tokenModel->findToken('token='.$token);
+                if(false == $cacheToken)
+                    return false;
+            }
 
             $offset = time() - intval($cacheToken->expire);
 
@@ -300,6 +297,9 @@ class BaseController extends Controller
             if (!empty($cacheToken->logout_time)) { // 已经退出登录
                 return false;
             }
+
+            session_id($token); // 设置session，方便取session的值
+
             return $cacheToken;
         }
 

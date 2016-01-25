@@ -9,9 +9,7 @@ $acl = new Phalcon\Acl\Adapter\Memory(); // 加载内存，提高访问速度
 
 $acl->setDefaultAction(Phalcon\Acl::DENY); // 默认不允许访问
 
-$acl->addRole(new Phalcon\Acl\Role('Guest'));
-$acl->addRole(new Phalcon\Acl\Role('Scanner'));
-$acl->addRole(new Phalcon\Acl\Role('Organizer'));
+$acl->addRole(new Phalcon\Acl\Role('User'));
 $acl->addRole(new Phalcon\Acl\Role('Admin'));
 
 // 这里是继承，第一个参数是儿子，第二个参数是父亲
@@ -21,17 +19,8 @@ $acl->addRole(new Phalcon\Acl\Role('Admin'));
  * 资源，定义访问的接口
  * */
 $arrResources = [
-    'Guest' => [
-        'UserController' => ['login', 'logout', 'createOrganizer'],
-    ],
-    'Scanner' => [
-        'UserController' => ['login', 'logout', 'createOrganizer']
-    ],
-    'Organizer' => [
-        'UserController' => ['login', 'logout', 'createOrganizer', 'getDetail'],
-        'EventController' => ['getDetail'],
-        'LotteryController' => ['getParticipants', 'getWinners', 'createWinner', 'deleteWinner'],
-        'LotteryManageController' => ['getLotteries', 'createLottery', 'updateLottery', 'deleteLottery']
+    'User' => [
+        'UserController' => ['login', 'logout'],
     ],
     'Admin' => [
     ]
@@ -52,20 +41,8 @@ foreach ($acl->getRoles() as $objRole) {
         }
     }
 
-    if ($roleName == 'Scanner') {
-        foreach ($arrResources['Scanner'] as $resource => $method) {
-            $acl->allow($roleName, $resource, $method);
-        }
-    }
-
-    if ($roleName == 'Organizer') {
-        foreach ($arrResources['Organizer'] as $resource => $method) {
-            $acl->allow($roleName, $resource, $method);
-        }
-    }
-
-    if ($roleName == 'Guest') {
-        foreach ($arrResources['Guest'] as $resource => $method) {
+    if ($roleName == 'User') {
+        foreach ($arrResources['User'] as $resource => $method) {
             $acl->allow($roleName, $resource, $method);
         }
     }
@@ -77,11 +54,16 @@ $app->before(function () use ($app, $acl) {
     $baseController = new BaseController();
     $cacheToken = $baseController->verifyToken();
     if (false == $cacheToken){
-        $auth = 'Guest';
+        $auth = 'User';
     }
     else{
         $auth = $cacheToken->auth;
     }
     $allowed = $acl->isAllowed($auth, $controller, $arrHandler[1]);
-    return $allowed;
+    if(false == $allowed){
+        $app->response = $baseController->tokenError(); // 返回无权限，提示信息和token错误一致
+        $app->response->send();
+        return false;
+    }
+    return true;
 });

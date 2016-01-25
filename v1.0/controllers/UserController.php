@@ -42,19 +42,12 @@ class UserController extends BaseController
         $userModel = new User();
 
         $result = $userModel->login($username, $password);
-
         if (false === $result) {
             return parent::response($userModel->getMessages(), 406);
         }
-
-        $eventModel = new Event();
-        $orgId = $result->parent_id == null ? $result->id : $result->parent_id;
-
         $roleUser = RoleUser::findFirst("user_id=" . $result->id);
 
-        $event = $eventModel->findFirst('org_id = ' . $orgId);
-
-        $token = parent::obtainToken($result->id, $orgId, $event->id, $roleUser->role_id);
+        $token = parent::obtainToken($result->id, $roleUser->role_id);
 
         if (false === $token) {
             return parent::response(array(

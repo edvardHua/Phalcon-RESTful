@@ -18,26 +18,35 @@ $di = new FactoryDefault();
 /**
  * 用来DEBUG SQL代码性能
  */
-if (true == $_CONFIG['debug']) {
+if (true == $config->other->debug) {
     $di->set('profiler', function () {
         return new ProfilerDb();
     }, true);
 }
 
-// 设置db
-$di->set('db', function () use ($di, $_CONFIG) {
-    if (false == $_CONFIG['debug']) {
-        return new Connection($_CONFIG['db']);
+/**
+ * 设置db
+ */
+$di->set('db', function () use ($di, $config) {
+
+    $dbConfig = array(
+        'host' => strval($config->database->host),
+        'username' => strval($config->database->username),
+        'password' => strval($config->database->password),
+        'dbname' => strval($config->database->name),
+        'charset' => strval($config->database->charset),
+    );
+
+    if (false == $config->other->debug) {
+        return new Connection($dbConfig);
     }
+
     /**
      * 下面的为开发配置，会将执行的所有sql语句写入debug.log
      * 文件夹，在生产环境下，使用上面的连接数据库语句
      */
     $eventsManager = new EventsManager();
-
     $logger = new FileLogger("logs/debug.log");
-
-    // Listen all the database events
     $eventsManager->attach('db', function ($event, $connection) use ($logger) {
         if ($event->getType() == 'beforeQuery') {
             $logger->log($connection->getSQLStatement(), Logger::INFO);
@@ -53,13 +62,14 @@ $di->set('db', function () use ($di, $_CONFIG) {
             $profiler->stopProfile();
         }
     });
-    $connection = new Connection($_CONFIG['db']);
+
+    $connection = new Connection($dbConfig);
     $connection->setEventsManager($eventsManager);
     return $connection;
 });
 
 // 设置cache
-$di->set('modelsCache', function () {
+$di->set('modelsCache', function () use($config) {
     //默认缓存时间为一天
     $frontCache = new \Phalcon\Cache\Frontend\Data(array(
         'lifetime' => 86400
@@ -67,8 +77,8 @@ $di->set('modelsCache', function () {
 
     //Memcached连接配置 这里使用的是Memcache适配器
     $cache = new \Phalcon\Cache\Backend\Memcache($frontCache, array(
-        'host' => $_CONFIG['memcache']['host'],
-        'port' => $_CONFIG['memcache']['port'],
+        'host' => $config->memcache->host,
+        'port' => $config->memcache->port
     ));
 
     return $cache;

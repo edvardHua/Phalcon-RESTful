@@ -18,11 +18,6 @@ router($app, 'User', array(
         'method' => 'delete',
         'path' => '/token',
         'action' => 'logout'
-    ),
-    array(
-        'method' => 'get',
-        'path' => '/user',
-        'action' => 'getDetail'
     )
 ), false);
 

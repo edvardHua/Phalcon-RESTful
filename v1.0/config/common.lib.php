@@ -14,3 +14,14 @@ function decode_request()
         $_REQUEST[$key] = $value;
     }
 }
+
+set_session_handle($config);
+
+function set_session_handle($config)
+{
+    require dirname(__DIR__) . '/libs/MemcacheSessionHandle.class.php';
+
+    $sessionHandle = new MemcacheSessionHandle($config);
+
+    session_set_save_handler($sessionHandle);
+}

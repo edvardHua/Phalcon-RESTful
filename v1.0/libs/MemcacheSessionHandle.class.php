@@ -1,8 +1,11 @@
 <?php
+
+/**
+ * Class MemcacheSessionHandle
+ */
 class MemcacheSessionHandle implements SessionHandlerInterface
 {
-    //session_set_save_handler
-    
+
     private $_memcache = null;
     
     private $_lifeTime = 7200;
@@ -11,11 +14,13 @@ class MemcacheSessionHandle implements SessionHandlerInterface
     
     private $_staticCache = array();
     
-    public function __construct()
+    public function __construct($config)
     {
-        global $_CONFIG;
-        
-        $this->_config = $_CONFIG['memcache'];
+        $this->_config = array(
+            'host' => $config->memcache->host,
+            'port' => $config->memcache->port,
+            'lifeTime' => $config->memcache->lifeTime
+        );
     }
     
     public function close()
@@ -49,9 +54,9 @@ class MemcacheSessionHandle implements SessionHandlerInterface
         $this->_sessionName = $sessionName;
         
         $this->_memcache = new memcache();
-        
+
         $this->_lifeTime = $this->_config['lifeTime'] ? $this->_config['lifeTime'] : 7200;
-        
+
         $result = $this->_memcache->connect($this->_config['host'], $this->_config['port']);
     
         return $result;

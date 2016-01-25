@@ -4,6 +4,8 @@
  * @author Edvard
  * @time 2015.12.14 12:13
  */
+
+use Phalcon\Config\Adapter\Ini as ConfigIni;
 use Phalcon\Mvc\Micro;
 use Phalcon\Loader;
 
@@ -12,7 +14,9 @@ try {
     /**
      * 加载配置文件，db，memcache，debug，charset
      */
-    include __DIR__ . '/config/config.php';
+    $config = new ConfigIni(__DIR__ . '/config/config.ini');
+    // 设置为GMT0
+    date_default_timezone_set($config->other->gmt);
 
     /**
      * 加载公共的代码
@@ -23,8 +27,8 @@ try {
     $loader = new Loader();
     $loader->registerDirs(
         array(
-            __DIR__ . '/models/',
-            __DIR__ . '/controller/'
+            __DIR__ . $config->application->modelsDir,
+            __DIR__ . $config->application->controllersDir
         )
     )->register();
 
@@ -48,7 +52,7 @@ try {
     $app->handle();
 
 } catch (Exception $e) {
-    if (true == $_CONFIG['debug']) {
+    if (true == $config->other->debug) {
         echo var_dump($e);
     } else {
         echo "Exception: ", $e->getMessage();
