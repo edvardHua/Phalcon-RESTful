@@ -27,19 +27,10 @@ class BaseModel extends Model
             )
         ));
 
-        $this->addBehavior(new Timestampable(
-        // 这里时间设置为 0 时区的timestamp
-            array(
-                'beforeCreate' => array(
-                    'field' => 'created_time',
-                    'format' => time()
-                ),
-                'beforeUpdate' => array(
-                    'field' => 'modified_time',
-                    'format' => time()
-                )
-            )
-        ));
+        $operation = new Operation();
+        $cacheToken = json_decode($this->getDI()->getSession()->get('token'));
+        $operation->setUserId($cacheToken->user_id);
+        $this->addBehavior($operation);
     }
 
     /**
@@ -76,28 +67,6 @@ class BaseModel extends Model
 
         return $arrayMessages;
     }
-
-    /**
-     * 分页的函数，后来使用phalcon自带的解决了
-     * @param $tableName
-     * @param null $field
-     * @param null $lastMinId
-     * @return mixed
-     */
-//    public function formPage($tableName, $where, $field = null, $lastMinId = null)
-//    {
-//        if (null == $field) {
-//            $field = "*";
-//        }
-//
-//        $sql = 'SELECT ' . $field . ' FROM ' . $tableName . ' GROUP BY uid HAVING uid < ' . $lastMinId . ' ORDER BY uid DESC LIMIT ' . self::LIMITITEM . ';';
-//        if (null == $lastMinId)
-//            $sql = 'SELECT ' . $field . ' FROM ' . $tableName . ' GROUP BY id ORDER BY id DESC LIMIT ' . self::LIMITITEM . ';';
-//
-//        $items = $this->getReadConnection()->query($sql);
-//        $items->setFetchMode(Phalcon\Db::FETCH_ASSOC);
-//        return $items->fetch();
-//    }
 
     public function page($table, $field, $where, $orderBy, $currentPage = 1, $limit = self::LIMIT_ITEM)
     {

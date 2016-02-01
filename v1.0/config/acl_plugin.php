@@ -11,6 +11,7 @@ $acl->setDefaultAction(Phalcon\Acl::DENY); // 默认不允许访问
 
 $acl->addRole(new Phalcon\Acl\Role('User'));
 $acl->addRole(new Phalcon\Acl\Role('Admin'));
+$acl->addRole(new Phalcon\Acl\Role('Guest'));
 
 // 这里是继承，第一个参数是儿子，第二个参数是父亲
 //$acl->addInherit('User','Guest');
@@ -20,9 +21,14 @@ $acl->addRole(new Phalcon\Acl\Role('Admin'));
  * */
 $arrResources = [
     'User' => [
-        'UserController' => ['login', 'logout'],
+        'PublicController' => ['login', 'logout','register'],
+        'UserController' => ['getInfo', 'updateInfo']
     ],
     'Admin' => [
+        'AdminController' => ['getUser','delUser']
+    ],
+    'Guest' => [
+        'PublicController' => ['login', 'logout','register']
     ]
 ];
 
@@ -46,6 +52,12 @@ foreach ($acl->getRoles() as $objRole) {
             $acl->allow($roleName, $resource, $method);
         }
     }
+
+    if ($roleName == 'Guest') {
+        foreach ($arrResources['Guest'] as $resource => $method) {
+            $acl->allow($roleName, $resource, $method);
+        }
+    }
 }
 
 $app->before(function () use ($app, $acl) {
@@ -54,7 +66,7 @@ $app->before(function () use ($app, $acl) {
     $baseController = new BaseController();
     $cacheToken = $baseController->verifyToken();
     if (false == $cacheToken){
-        $auth = 'User';
+        $auth = 'Guest';
     }
     else{
         $auth = $cacheToken->auth;

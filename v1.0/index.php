@@ -28,10 +28,18 @@ try {
     $loader->registerDirs(
         array(
             __DIR__ . $config->application->modelsDir,
+            __DIR__ . $config->application->behaviorsDir,
             __DIR__ . $config->application->controllersDir
         )
     )->register();
 
+    // 方便使用自定义组件
+    $loader->registerNamespaces(array(
+            "Custom\\Models"  => __DIR__ . $config->application->modelsDir,
+            "Custom\\Models\\Behaviors"  => __DIR__ . $config->application->behaviorsDir,
+            "Custom\\Controllers"  => __DIR__ . $config->application->controllersDir
+        )
+    );
     /**
      * 注册di，db服务
      */

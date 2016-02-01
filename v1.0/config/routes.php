@@ -8,7 +8,7 @@
 
 use Phalcon\Mvc\Micro\Collection as MicroCollection;
 
-router($app, 'User', array(
+router($app, 'Public', array(
     array(
         'method' => 'post',
         'path' => '/token',
@@ -17,6 +17,37 @@ router($app, 'User', array(
     array(
         'method' => 'delete',
         'path' => '/token',
+        'action' => 'logout'
+    ),
+    array(
+        'method' => 'post',
+        'path' => '/register',
+        'action' => 'register'
+    )
+), false);
+
+router($app, 'User', array(
+    array(
+        'method' => 'get',
+        'path' => '/user/info',
+        'action' => 'getInfo'
+    ),
+    array(
+        'method' => 'put',
+        'path' => '/user/info',
+        'action' => 'updateInfo'
+    )
+), false);
+
+router($app, 'Admin', array(
+    array(
+        'method' => 'get',
+        'path' => '/admin/user/{id}',
+        'action' => 'login'
+    ),
+    array(
+        'method' => 'delete',
+        'path' => '/admin/user',
         'action' => 'logout'
     )
 ), false);

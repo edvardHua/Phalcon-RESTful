@@ -4,6 +4,7 @@ use Phalcon\Mvc\Controller;
 use Phalcon\Http\Response;
 use Phalcon\Http\Request;
 
+
 class BaseController extends Controller
 {
     /**
@@ -194,15 +195,19 @@ class BaseController extends Controller
      * @param null $customTips 自定义的消息组
      * @return Response
      */
-    public function error($field, $code)
+    public function error($field, $code, $message = null)
     {
         $data = array(
             'errors' => array()
         );
+
+        if(null == $message)
+            $message = $this->_errors[$code]['message'];
+
         $item = array(
             'code' => $code,
             'field' => $field,
-            'message' => $this->_errors[$code]['message'],
+            'message' => $message,
         );
         $data['errors'][] = $item;
 
@@ -237,13 +242,12 @@ class BaseController extends Controller
      */
     protected function obtainToken($userId, $role)
     {
-        session_start();
+//        session_start();
         session_regenerate_id();
         $sessionId = session_id();
         $token = new Token();
 
         $token->expire = time() + self::$expire;
-        $token->create_time = time();
         $token->token = $sessionId;
         $token->user_id = $userId;
 
@@ -283,7 +287,7 @@ class BaseController extends Controller
             $cacheToken = json_decode($this->session->get('token')); //从缓存中取得token
             if (null == $cacheToken){
                 $tokenModel = new Token(); // 避免缓存失效，再去数据库里面拿
-                $cacheToken = $tokenModel->findToken('token='.$token);
+                $cacheToken = $tokenModel->findToken($token);
                 if(false == $cacheToken)
                     return false;
             }

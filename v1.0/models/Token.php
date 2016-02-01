@@ -6,9 +6,10 @@
  * @author Edvard
  * @time 2015.12.14 12:13
  */
+
 use Phalcon\Mvc\Model;
 
-class Token extends \Phalcon\Mvc\Model
+class Token extends BaseModel
 {
 
     /**

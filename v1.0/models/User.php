@@ -6,6 +6,7 @@
  * @author Edvard
  * @time 2015.12.14 12:13
  */
+
 use Phalcon\Mvc\Model;
 use Phalcon\Mvc\Model\Validator\Uniqueness;
 use Phalcon\Mvc\Model\Validator\PresenceOf;
@@ -229,5 +230,4 @@ class User extends BaseModel
         
         return $user;
     }
-
 }
