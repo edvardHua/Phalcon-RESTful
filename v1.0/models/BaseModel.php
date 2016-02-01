@@ -27,10 +27,10 @@ class BaseModel extends Model
             )
         ));
 
-        $operation = new Operation();
+        $operationLog = new OperationLog();
         $cacheToken = json_decode($this->getDI()->getSession()->get('token'));
-        $operation->setUserId($cacheToken->user_id);
-        $this->addBehavior($operation);
+        $operationLog->setUserId($cacheToken->user_id);
+        $this->addBehavior($operationLog);
     }
 
     /**

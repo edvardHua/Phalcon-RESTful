@@ -9,7 +9,7 @@
 use Phalcon\Mvc\Model\Behavior;
 use Phalcon\Mvc\Model\BehaviorInterface;
 
-class Operation extends Behavior implements BehaviorInterface
+class OperationLog extends Behavior implements BehaviorInterface
 {
 
     private $userId = null;
