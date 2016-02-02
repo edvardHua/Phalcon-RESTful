@@ -142,14 +142,12 @@ class User extends BaseModel
         return 'user';
     }
 
+    /**
+     * @return bool
+     */
     public function validation()
     {
-
-        // 名字唯一
         $this->validate(
-        /**
-         * @link https://docs.phalconphp.com/en/latest/api/index.html
-         */
             new Uniqueness(
                 array(
                     "field" => "username",
@@ -157,7 +155,6 @@ class User extends BaseModel
                 )
             )
         );
-
 
         $this->validate(new PresenceOf(
             array(
@@ -177,7 +174,7 @@ class User extends BaseModel
         if ($this->validationHasFailed() == true) {
             return false;
         }
-        
+
         return true;
     }
 
@@ -203,31 +200,58 @@ class User extends BaseModel
         return parent::findFirst($parameters);
     }
 
+    /**
+     * @param $username
+     * @param $password
+     * @return bool|User
+     */
     public function login($username, $password)
     {
-        if(empty($username)){
-            $this->appendMessage(new Message('The username is required','username','PresenceOf'));
+        if (empty($username)) {
+            $this->appendMessage(new Message('The username is required', 'username', 'PresenceOf'));
             return false;
         }
 
-        if(empty($password)){
-            $this->appendMessage(new Message('The password is required','password','PresenceOf'));
+        if (empty($password)) {
+            $this->appendMessage(new Message('The password is required', 'password', 'PresenceOf'));
             return false;
         }
 
         // 用户名不分大小写
-        $user = $this->findFirst("lower(username)='".strtolower($username)."'");
+        $user = $this->findFirst("lower(username)='" . strtolower($username) . "'");
 
-        if(false == $user) {
-            $this->appendMessage(new Message('The username is incorrect','username','Inclusion'));
+        if (false == $user) {
+            $this->appendMessage(new Message('The username is incorrect', 'username', 'Inclusion'));
             return false;
         }
 
-        if (!password_verify($password,$user->password)) {
-            $this->appendMessage(new Message('The password is incorrect','password','Inclusion'));
+        if (!password_verify($password, $user->password)) {
+            $this->appendMessage(new Message('The password is incorrect', 'password', 'Inclusion'));
             return false;
         }
-        
+
         return $user;
+    }
+
+    public function createUser($user)
+    {
+        $this->username = $user['username'];
+        if (!empty($user['password'])) {
+            $this->password = password_hash($user['password'], PASSWORD_DEFAULT);
+        }
+        $this->name = $user['name'];
+        $this->title = $user['title'];
+        if (!filter_var($user['email'], FILTER_VALIDATE_EMAIL)) {
+            $this->appendMessage(new Message('The email is incorrect', 'email', 'Inclusion'));
+            return false;
+        }
+        $this->email = $user['email'];
+
+        $res = $this->save();
+        if (false == $res) {
+            return $res;
+        }
+
+        return $res;
     }
 }
