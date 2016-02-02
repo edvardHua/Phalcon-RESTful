@@ -39,26 +39,18 @@ class PublicController extends BaseController
         $username = $this->request->getPost('username');
         $password = $this->request->getPost('password');
 
-        $userModel = new User();
+        $modelUser = new User();
 
-        $result = $userModel->login($username, $password);
+        $result = $modelUser->login($username, $password);
         if (false === $result) {
-            return parent::response($userModel->getMessages(), 406);
+            return parent::response($modelUser->getMessages(), 406);
         }
         $roleUser = RoleUser::findFirst("user_id=" . $result->id);
 
         $token = parent::obtainToken($result->id, $roleUser->role_id);
 
         if (false === $token) {
-            return parent::response(array(
-                'errors' => array(
-                    array(
-                        'code' => 500,
-                        'field' => null,
-                        'message' => 'unkown error',
-                    )
-                )
-            ), 500);
+            return parent::serverError();
         }
 
         return parent::success(array(
@@ -66,11 +58,35 @@ class PublicController extends BaseController
         ));
     }
 
-    public function logout(){
+    public function logout()
+    {
+        $token = parent::verifyToken();
 
+        if (false == $token)
+            return parent::tokenError();
+
+        if (!empty($token->logout_time))
+            return parent::tokenError();
+
+        $dbToken = Token::findFirst("token='".$token->token."'");
+        if (false == $dbToken->delete())
+            return parent::serverError();
+
+        $this->session->destroy($token->token); // 删除缓存中的token
+        return parent::success();
     }
 
     public function register(){
+        $this->db->begin();
+        $modelUser = new User();
+        $res = $modelUser->createUser($this->request->getPost());
 
+        if(false == $res){
+            $this->db->rollback();
+            return parent::resWithErrMsg($modelUser->getMessages());
+        }
+
+        $this->db->commit();
+        return parent::success();
     }
 }

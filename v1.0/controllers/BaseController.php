@@ -28,7 +28,7 @@ class BaseController extends Controller
      *     {
      *      "errors": [
      *                  {
-     *                    "code": "0001",
+     *                    "type": "PresenceOf",
      *                    "field": "param_key",
      *                    "message": "The param_key is required"
      *                  }
@@ -41,7 +41,7 @@ class BaseController extends Controller
      *     {
      *      "errors": [
      *                  {
-     *                    "code": "0002",
+     *                    "type": "Inclusion",
      *                    "field": "param_key",
      *                    "message": "The param_key is incorrect"
      *                  }
@@ -52,7 +52,7 @@ class BaseController extends Controller
      *     {
      *      "errors": [
      *                  {
-     *                     "code": "0003",
+     *                     "type": "Inclusion",
      *                     "field": "token",
      *                     "message": "Permission denied."
      *                  }
@@ -60,20 +60,7 @@ class BaseController extends Controller
      *     }
      */
 
-    private static $expire = 7200; // 暂时设定默认过期时间为两小时
-
-    const FIELD_REQUIRED = '0001'; // 该值为空
-    const PARAMS_INVALID = '0002'; // 参数不合法
-    const PERMISSION_DENIED = '0003'; // 没有权限
-    /**
-     * 公共的错误码
-     * @var array
-     */
-    private $_errors = array(
-        self::FIELD_REQUIRED => array('http_code' => 406, 'field' => null, 'message' => 'Not found or forbidden.'),
-        self::PARAMS_INVALID => array('http_code' => 406, 'field' => null, 'message' => 'Parameter invalid.'),
-        self::PERMISSION_DENIED => array('http_code' => 401, 'field' => null, 'message' => 'Permission denied.')
-    );
+    private static $_expire = 7200; // 暂时设定默认过期时间为两小时
 
     /**
      *
@@ -184,43 +171,26 @@ class BaseController extends Controller
         $response->setContent(!empty($this->_statuses[$status]) ? $this->_statuses[$status] : null);
         $response->setHeader('Content-type', 'application/json');
         $response->setHeader('api-version', '1.0');
-        $response->setJsonContent($data);
+        $response->setJsonContent($data, JSON_PRETTY_PRINT);
 
         return $response;
     }
 
     /**
-     * @param array $errors
+     * response以及返回错误信息
+     * @param array $data
      * @param int $status
-     * @param null $customTips 自定义的消息组
-     * @return Response
      */
-    public function error($field, $code, $message = null)
-    {
-        $data = array(
-            'errors' => array()
-        );
-
-        if(null == $message)
-            $message = $this->_errors[$code]['message'];
-
-        $item = array(
-            'code' => $code,
-            'field' => $field,
-            'message' => $message,
-        );
-        $data['errors'][] = $item;
-
-        return $this->response($data, $this->_errors[$code]['http_code']);
-    }
-
-    /**
-     * 因为频繁用到，所以抽取
-     * @return Response
-     */
-    public function tokenError()
-    {
-        return self::error('token', self::PERMISSION_DENIED);
+    public function resWithErrMsg($data = array(),$status = 406){
+        $resData['errors'] = array();
+        foreach($data as $item){
+            $resData['errors'][] = array(
+                'type' => $item->getType(),
+                'message' => $item->getMessage(),
+                'field' => $item->getField()
+            );
+        }
+        return self::response($resData,$status);
     }
 
     /**
@@ -242,12 +212,11 @@ class BaseController extends Controller
      */
     protected function obtainToken($userId, $role)
     {
-//        session_start();
         session_regenerate_id();
         $sessionId = session_id();
         $token = new Token();
 
-        $token->expire = time() + self::$expire;
+        $token->expire = time() + self::$_expire;
         $token->token = $sessionId;
         $token->user_id = $userId;
 
@@ -311,6 +280,10 @@ class BaseController extends Controller
         return false;
     }
 
+    /**
+     * @param $p
+     * @return bool
+     */
     public function verifyNumeric($p)
     {
         if (!empty($p)) {
@@ -322,6 +295,10 @@ class BaseController extends Controller
         return true;
     }
 
+    /**
+     * @param $param
+     * @return bool|mixed
+     */
     public function verifyJson($param)
     {
         if (!empty($param)) {
@@ -333,19 +310,32 @@ class BaseController extends Controller
         return true;
     }
 
-    public function pInvalid()
-    {
-        return self::error('p', self::PARAMS_INVALID);
+    /**
+     * @return mixed
+     */
+    public function serverError(){
+        return parent::response(array(
+            'errors' => array(
+                array(
+                    'message' => 'unkown error',
+                )
+            )
+        ), 500);
     }
 
-    public function perPageInvalid()
-    {
-        return self::error('perpage', self::PARAMS_INVALID);
-    }
-
-    public function filterInvalid()
-    {
-        return self::error('filter', self::PARAMS_INVALID);
+    /**
+     * @return mixed
+     */
+    public function tokenError(){
+        return parent::response(array(
+            'errors' => array(
+                array(
+                    'type' => 'Inclusion',
+                    'message' => 'unkown error',
+                    'field' => 'token'
+                )
+            )
+        ), 401);
     }
 
     public function index()

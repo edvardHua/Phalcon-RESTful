@@ -12,32 +12,32 @@ use Phalcon\Mvc\Model\BehaviorInterface;
 class OperationLog extends Behavior implements BehaviorInterface
 {
 
-    private $userId = null;
+    private $_userId = null;
 
     public function notify($type, \Phalcon\Mvc\ModelInterface $model)
     {
         switch ($type) {
             case 'beforeUpdate':
                 $model->modified_time = time();
-                $model->modifier = $this->userId;
+                $model->modifier = $this->_userId;
                 break;
             case 'beforeCreate':
                 $model->created_time = time();
-                $model->creator = $this->userId;
+                $model->creator = $this->_userId;
                 break;
             case 'beforeSave':
                 $model->modified_time = time();
-                $model->modifier = $this->userId;
+                $model->modifier = $this->_userId;
                 break;
             case 'beforeDelete':
                 $model->deleted_time = time();
-                $model->deletor = $this->userId;
+                $model->deletor = $this->_userId;
                 break;
             default:
         }
     }
 
-    public function setUserId($userId){
-        $this->userId = $userId;
+    public function setUserId($_userId){
+        $this->_userId = $_userId;
     }
 }

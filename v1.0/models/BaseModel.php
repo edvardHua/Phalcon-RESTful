@@ -8,18 +8,18 @@
 
 use Phalcon\Mvc\Model;
 use Phalcon\Mvc\Model\Behavior\SoftDelete;
-use Phalcon\Mvc\Model\Behavior\Timestampable;
 use Phalcon\Paginator\Adapter\NativeArray as PaginatorArray;
 use Phalcon\Paginator\Adapter\QueryBuilder as PaginatorQueryBuilder;
 
 class BaseModel extends Model
 {
     const DELETED = 1;
-    const NOT_DELETED = 0;
     const LIMIT_ITEM = 10;
 
     public function initialize()
     {
+        $this->setConnectionService('db'); // 可修改连接的数据库
+
         $this->addBehavior(new SoftDelete(
             array(
                 'field' => 'isdeleted',
@@ -29,45 +29,21 @@ class BaseModel extends Model
 
         $operationLog = new OperationLog();
         $cacheToken = json_decode($this->getDI()->getSession()->get('token'));
-        $operationLog->setUserId($cacheToken->user_id);
+        if (null !== $cacheToken) {  // 一些公共的接口是没有登录信息的
+            $operationLog->setUserId($cacheToken->user_id);
+        }
         $this->addBehavior($operationLog);
     }
 
     /**
-     * 把信息格式化成我们需要的
-     *
-     * @param null $filter
-     * @return array|\Phalcon\Mvc\MessageInterface[]
+     * @param $table
+     * @param $field
+     * @param $where
+     * @param $orderBy
+     * @param int $currentPage
+     * @param int $limit
+     * @return stdClass
      */
-    public function getMessages($filter = null)
-    {
-        $messages = parent::getMessages($filter);
-        if (empty($messages))
-            return parent::getMessages($filter);
-
-        $arrayMessages['errors'] = array();
-        foreach ($messages as $message) {
-            switch ($message->getType()) {
-                case 'PresenceOf':
-                    $arrayMessages['errors'][] = array(
-                        'code' => BaseController::FIELD_REQUIRED, // 错误码取自BaseController
-                        'field' => $message->getField(),
-                        'message' => $message->getMessage()
-                    );
-                    break;
-                case 'Inclusion':
-                    $arrayMessages['errors'][] = array(
-                        'code' => BaseController::PARAMS_INVALID, // 错误码取自BaseController
-                        'field' => $message->getField(),
-                        'message' => $message->getMessage()
-                    );
-                    break;
-            }
-        }
-
-        return $arrayMessages;
-    }
-
     public function page($table, $field, $where, $orderBy, $currentPage = 1, $limit = self::LIMIT_ITEM)
     {
         if (empty($limit)) {
@@ -90,6 +66,12 @@ class BaseModel extends Model
         return $paginator->getPaginate();
     }
 
+    /**
+     * @param $data
+     * @param int $currentPage
+     * @param int $limit
+     * @return stdClass
+     */
     public function pageByData($data, $currentPage = 1, $limit = self::LIMIT_ITEM)
     {
         if (empty($limit)) {
@@ -105,10 +87,15 @@ class BaseModel extends Model
         return $paginator->getPaginate();
     }
 
-    public function commonPageField($data, $page, $p = 1)
+    /**
+     * @param $data
+     * @param $page
+     * @param int $p
+     * @param string $path
+     * @return mixed
+     */
+    public function commonPageField($data, $page, $p = 1, $path = '')
     {
-        if (empty($limit))
-            $limit = self::LIMIT_ITEM;
 
         $data['total_pages'] = $page->total_pages;
         $data['total_items'] = $page->total_items;
@@ -118,12 +105,13 @@ class BaseModel extends Model
         $data['current'] = $p;
 
         if (!empty($p) && $p != 1)
-            $data['prev'] = '/session?p=' . ($p - 1);
+            $data['prev'] = $path . '?p=' . ($p - 1);
         else
-            $data['prev'] = '/session?p=' . $page->total_pages; // 循环吧，到最后一页
+            $data['prev'] = $path . '?p=' . $page->total_pages; // 循环吧，到最后一页
 
-        $data['next'] = '/session?p=' . ($p + 1);
+        $data['next'] = $path . '?p=' . ($p + 1);
         $data['perpage'] = $page->limit;
         return $data;
     }
+
 }
