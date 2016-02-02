@@ -171,8 +171,17 @@ class BaseController extends Controller
         $response->setContent(!empty($this->_statuses[$status]) ? $this->_statuses[$status] : null);
         $response->setHeader('Content-type', 'application/json');
         $response->setHeader('api-version', '1.0');
+        $devDebug = $this->request->get('devDebug');
+        if(true == $devDebug){
+            $profiles = $this->getDI()->get('profiler')->getProfiles();
+            foreach ($profiles as $profile) {
+                $data['SQL Statement'] =  $profile->getSQLStatement();
+                $data['Start Time'] = $profile->getInitialTime();
+                $data['Final Time'] = $profile->getFinalTime();
+                $data['Total Elapsed Time'] = $profile->getTotalElapsedSeconds();
+            }
+        }
         $response->setJsonContent($data, JSON_PRETTY_PRINT);
-
         return $response;
     }
 
