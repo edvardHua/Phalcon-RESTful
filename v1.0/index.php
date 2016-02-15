@@ -28,6 +28,7 @@ try {
     $loader->registerDirs(
         array(
             __DIR__ . $config->application->modelsDir,
+            __DIR__ . $config->application->formsDir,
             __DIR__ . $config->application->behaviorsDir,
             __DIR__ . $config->application->controllersDir
         )
