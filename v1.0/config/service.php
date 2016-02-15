@@ -16,6 +16,20 @@ use Phalcon\Db\Adapter\Pdo\Mysql as Connection;
 $di = new FactoryDefault();
 
 /**
+ * 创建logs/debug.log
+ * 并修改访问的权限
+ */
+$dir = 'logs\\';
+if(TRUE != is_dir($dir)){
+    mkdir($dir,0640);
+    $fileName = $dir.'debug.log';
+    $fp=fopen($fileName, "w+");
+    if ( !is_writable($fileName) ){
+        throw new \Phalcon\Exception('debug.log is not writable');
+    }
+}
+
+/**
  * 用来DEBUG SQL代码性能
  */
 if (true == $config->other->debug) {
