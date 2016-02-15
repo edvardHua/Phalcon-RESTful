@@ -64,12 +64,12 @@ $app->before(function () use ($app, $acl) {
     $arrHandler = $app->getActiveHandler();
     $controller = str_replace('Controller\\', '', get_class($arrHandler[0]));
     $baseController = new BaseController();
-    $cacheToken = $baseController->verifyToken();
-    if (false == $cacheToken){
+    $token = $baseController->verifyToken();
+    if (false == $token){
         $auth = 'Guest';
     }
     else{
-        $auth = $cacheToken->auth;
+        $auth = $token->auth;
     }
     $allowed = $acl->isAllowed($auth, $controller, $arrHandler[1]);
     if(false == $allowed){
@@ -77,5 +77,6 @@ $app->before(function () use ($app, $acl) {
         $app->response->send();
         return false;
     }
+    $app->getDI()->set('token',$token); // 把token放进di里面
     return true;
 });

@@ -60,7 +60,7 @@ class PublicController extends BaseController
 
     public function logout()
     {
-        $token = parent::verifyToken();
+        $token = $this->di->get('token');
 
         if (false == $token)
             return parent::tokenError();
