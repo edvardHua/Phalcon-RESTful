@@ -4,10 +4,10 @@ Best practice of Phalcon RESFTful Server
 
 #### Requirement
 
-    - Phalcon 2.0.8
-    - Memcached 
+> Phalcon 2.0.8
+> Memcached 
 
-#### Framework
+#### Architecture
 ![image](https://github.com/edvardHua/Phalcon-RESTful-Server/raw/master/img/framework.png)
 
 #### Postman Test Script (not finish)
