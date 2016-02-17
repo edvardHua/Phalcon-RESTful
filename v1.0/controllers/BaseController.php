@@ -172,14 +172,15 @@ class BaseController extends Controller
         $response->setHeader('Content-type', 'application/json');
         $response->setHeader('api-version', '1.0');
         $devDebug = $this->request->get('devDebug');
-        if(true == $devDebug){
+        if (true == $devDebug) {
             $profiles = $this->getDI()->get('profiler')->getProfiles();
-            foreach ($profiles as $profile) {
-                $data['SQL Statement'] =  $profile->getSQLStatement();
-                $data['Start Time'] = $profile->getInitialTime();
-                $data['Final Time'] = $profile->getFinalTime();
-                $data['Total Elapsed Time'] = $profile->getTotalElapsedSeconds();
-            }
+            if (false != $profiles)
+                foreach ($profiles as $profile) {
+                    $data['SQL Statement'] = $profile->getSQLStatement();
+                    $data['Start Time'] = $profile->getInitialTime();
+                    $data['Final Time'] = $profile->getFinalTime();
+                    $data['Total Elapsed Time'] = $profile->getTotalElapsedSeconds();
+                }
         }
         $response->setJsonContent($data, JSON_PRETTY_PRINT);
         return $response;
@@ -190,16 +191,26 @@ class BaseController extends Controller
      * @param array $data
      * @param int $status
      */
-    public function resWithErrMsg($data = array(),$status = 406){
-        $resData['errors'] = array();
-        foreach($data as $item){
-            $resData['errors'][] = array(
-                'type' => $item->getType(),
-                'message' => $item->getMessage(),
-                'field' => $item->getField()
+    public function resWithErrMsg($data = array(), $status = 406)
+    {
+        $resData['errors'] = self::messagesToArray($data);
+        return self::response($resData, $status);
+    }
+
+    /**
+     * 将Phalcon的Message数据类型转换成Array数据类型
+     * @param $messages
+     */
+    public function messagesToArray($messages)
+    {
+        foreach ($messages as $message) {
+            $res[] = array(
+                'type' => $message->getType(),
+                'field' => $message->getField(),
+                'message' => $message->getMessage()
             );
         }
-        return self::response($resData,$status);
+        return $res;
     }
 
     /**
@@ -290,21 +301,6 @@ class BaseController extends Controller
     }
 
     /**
-     * @param $p
-     * @return bool
-     */
-    public function verifyNumeric($p)
-    {
-        if (!empty($p)) {
-            $reg = '/^\+?[1-9][0-9]*$/';
-            preg_match($reg, $p, $result);
-            if (empty($result))
-                return false;
-        }
-        return true;
-    }
-
-    /**
      * @param $param
      * @return bool|mixed
      */
@@ -349,6 +345,6 @@ class BaseController extends Controller
 
     public function index()
     {
-        echo 'Singou Encounter Back End API Server';
+        echo 'RESTful Server :-)';
     }
 }

@@ -41,10 +41,18 @@ class PublicController extends BaseController
 
         $modelUser = new User();
 
+        $userValidator = new UserValidator();
+        $messages = $userValidator->validate($this->request->getPost());
+
+        if (0 != count($messages)) {
+            return parent::resWithErrMsg($messages, 406);
+        }
+
         $result = $modelUser->login($username, $password);
         if (false === $result) {
-            return parent::response($modelUser->getMessages(), 406);
+            return parent::resWithErrMsg($modelUser->getMessages(), 406);
         }
+
         $roleUser = RoleUser::findFirst("user_id=" . $result->id);
 
         $token = parent::obtainToken($result->id, $roleUser->role_id);
@@ -68,7 +76,7 @@ class PublicController extends BaseController
         if (!empty($token->logout_time))
             return parent::tokenError();
 
-        $dbToken = Token::findFirst("token='".$token->token."'");
+        $dbToken = Token::findFirst("token='" . $token->token . "'");
         if (false == $dbToken->delete())
             return parent::serverError();
 
@@ -76,12 +84,13 @@ class PublicController extends BaseController
         return parent::success();
     }
 
-    public function register(){
+    public function register()
+    {
         $this->db->begin();
         $modelUser = new User();
         $res = $modelUser->createUser($this->request->getPost());
 
-        if(false == $res){
+        if (false == $res) {
             $this->db->rollback();
             return parent::resWithErrMsg($modelUser->getMessages());
         }
