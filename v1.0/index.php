@@ -28,8 +28,8 @@ try {
     $loader->registerDirs(
         array(
             __DIR__ . $config->application->modelsDir,
-            __DIR__ . $config->application->formsDir,
             __DIR__ . $config->application->behaviorsDir,
+            __DIR__ . $config->application->validatorsDir,
             __DIR__ . $config->application->controllersDir
         )
     )->register();
@@ -38,6 +38,7 @@ try {
     $loader->registerNamespaces(array(
             "Custom\\Models"  => __DIR__ . $config->application->modelsDir,
             "Custom\\Models\\Behaviors"  => __DIR__ . $config->application->behaviorsDir,
+            "Custom\\Models\\Valiadtors"  => __DIR__ . $config->application->validatorsDir,
             "Custom\\Controllers"  => __DIR__ . $config->application->controllersDir
         )
     );

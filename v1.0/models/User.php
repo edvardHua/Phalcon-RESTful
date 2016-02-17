@@ -207,16 +207,6 @@ class User extends BaseModel
      */
     public function login($username, $password)
     {
-        if (empty($username)) {
-            $this->appendMessage(new Message('The username is required', 'username', 'PresenceOf'));
-            return false;
-        }
-
-        if (empty($password)) {
-            $this->appendMessage(new Message('The password is required', 'password', 'PresenceOf'));
-            return false;
-        }
-
         // 用户名不分大小写
         $user = $this->findFirst("lower(username)='" . strtolower($username) . "'");
 
