@@ -10,11 +10,13 @@ use Phalcon\Http\Response;
 
 class AdminController extends BaseController
 {
-    public function getUser($id){
+    public function getUser($id)
+    {
 
     }
 
-    public function delUser(){
+    public function deleteUser($id)
+    {
 
     }
 }

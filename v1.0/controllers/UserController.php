@@ -10,11 +10,13 @@ use Phalcon\Http\Response;
 
 class UserController extends BaseController
 {
-    public function getInfo(){
+    public function getUser($id)
+    {
 
     }
 
-    public function updateInfo(){
+    public function updateUser($id)
+    {
 
     }
 

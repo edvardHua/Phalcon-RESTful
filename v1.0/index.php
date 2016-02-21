@@ -15,7 +15,11 @@ try {
      * 加载配置文件，db，memcache，debug，charset
      */
     $config = new ConfigIni(__DIR__ . '/config/config.ini');
-    // 设置为GMT0
+
+
+    /**
+     * 设置为GMT0
+     */
     date_default_timezone_set($config->other->gmt);
 
     /**
@@ -47,6 +51,10 @@ try {
      */
     include __DIR__ . "/config/service.php";
 
+    /**
+     * 保存配置到DI
+     */
+    $di->set('config',$config);
     $app = new Micro($di);
 
     /**
