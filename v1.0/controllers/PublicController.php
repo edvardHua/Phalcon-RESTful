@@ -36,6 +36,7 @@ class PublicController extends BaseController
      */
     public function login()
     {
+
         $username = $this->request->getPost('username');
         $password = $this->request->getPost('password');
 
@@ -68,7 +69,7 @@ class PublicController extends BaseController
 
     public function logout()
     {
-        $token = $this->di->get('token');
+        $token = $this->session->get('token');
 
         if (false == $token)
             return parent::tokenError();
@@ -77,10 +78,11 @@ class PublicController extends BaseController
             return parent::tokenError();
 
         $dbToken = Token::findFirst("token='" . $token->token . "'");
+        $dbToken->logout_time = time();
         if (false == $dbToken->delete())
             return parent::serverError();
 
-        $this->session->destroy($token->token); // 删除缓存中的token
+        $this->session->set('token',null); // 设置token为null
         return parent::success();
     }
 

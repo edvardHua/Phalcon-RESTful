@@ -65,18 +65,20 @@ $app->before(function () use ($app, $acl) {
     $controller = str_replace('Controller\\', '', get_class($arrHandler[0]));
     $baseController = new BaseController();
     $token = $baseController->verifyToken();
+
     if (false == $token){
         $auth = 'Guest';
     }
     else{
         $auth = $token->auth;
     }
+
     $allowed = $acl->isAllowed($auth, $controller, $arrHandler[1]);
     if(false == $allowed){
         $app->response = $baseController->tokenError(); // 返回无权限，提示信息和token错误一致
         $app->response->send();
         return false;
     }
-    $app->getDI()->set('token',$token); // 把token放进di里面
+
     return true;
 });

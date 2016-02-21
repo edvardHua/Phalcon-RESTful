@@ -252,7 +252,7 @@ class BaseController extends Controller
         /**
          * 把这玩意保存进session
          */
-        $this->session->set('token', json_encode($token));
+        $this->session->set('token', $token);
 
         if (!$token->save()) {
             return false;
@@ -273,25 +273,29 @@ class BaseController extends Controller
 
         if (!empty($token)) {
             session_id($token);
-            $cacheToken = json_decode($this->session->get('token')); //从缓存中取得token
+            $cacheToken = $this->session->get('token'); //从session中取得token
+
             if (null == $cacheToken){
                 $tokenModel = new Token(); // 避免缓存失效，再去数据库里面拿
-                $cacheToken = $tokenModel->findToken($token);
+                $cacheToken = $tokenModel->findFirst("token='".$token."'");
                 if(false == $cacheToken)
                     return false;
+                else{
+                    $this->session->set('token', $token);  // 再次存进session中去
+                }
             }
 
             $offset = time() - intval($cacheToken->expire);
 
             if ($offset > 0) { // 过期
+                $this->session->set('token',null);
                 return false;
             }
 
             if (!empty($cacheToken->logout_time)) { // 已经退出登录
+                $this->session->set('token',null);
                 return false;
             }
-
-            session_id($token); // 设置session，方便取session的值
 
             return $cacheToken;
         }
@@ -319,7 +323,7 @@ class BaseController extends Controller
      * @return mixed
      */
     public function serverError(){
-        return parent::response(array(
+        return self::response(array(
             'errors' => array(
                 array(
                     'message' => 'unkown error',
@@ -332,11 +336,11 @@ class BaseController extends Controller
      * @return mixed
      */
     public function tokenError(){
-        return parent::response(array(
+        return self::response(array(
             'errors' => array(
                 array(
                     'type' => 'Inclusion',
-                    'message' => 'unkown error',
+                    'message' => 'Permission denied.',
                     'field' => 'token'
                 )
             )
