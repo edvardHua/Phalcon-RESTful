@@ -240,11 +240,12 @@ class BaseController extends Controller
         $token->token = $sessionId;
         $token->user_id = $userId;
 
+        $config = $this->di->get('config');
         switch($role){
-            case 1:
+            case $config->role->Admin:
                 $token->auth = 'Admin';
                 break;
-            case 2:
+            case $config->role->User:
                 $token->auth = 'User';
                 break;
         }
@@ -345,6 +346,22 @@ class BaseController extends Controller
                 )
             )
         ), 401);
+    }
+
+    /**
+     * @param $field
+     * @return Response
+     */
+    public function valueDuplicate($field){
+        return self::response(array(
+            'errors' => array(
+                array(
+                    'type' => 'Uniqueness',
+                    'message' => 'Value duplicate.',
+                    'field' => $field
+                )
+            )
+        ), 406);
     }
 
     public function index()
