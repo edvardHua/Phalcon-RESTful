@@ -28,7 +28,7 @@ class BaseModel extends Model
         ));
 
         $operationLog = new OperationLog();
-        $cacheToken = json_decode($this->getDI()->getSession()->get('token'));
+        $cacheToken = $this->getDI()->getSession()->get('token');
         if (null !== $cacheToken) {  // 一些公共的接口是没有登录信息的
             $operationLog->setUserId($cacheToken->user_id);
         }

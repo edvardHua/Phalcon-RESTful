@@ -89,12 +89,37 @@ class PublicController extends BaseController
     public function register()
     {
         $this->db->begin();
-        $modelUser = new User();
-        $res = $modelUser->createUser($this->request->getPost());
 
+        $data = $this->request->getPost();
+
+        $userValidator = new UserValidator();
+        $messages = $userValidator->validate($data);
+        if(0 != count($messages)){
+            return parent::resWithErrMsg($messages, 406);
+        }
+
+        $modelUser = new User();
+        $duplicate = $modelUser->findFirst("lower(username)='".strtolower($data['username'])."'");
+        if(!empty($duplicate)){
+            return parent::valueDuplicate('username');
+        }
+
+        $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
+        $res = $modelUser->create($data);
         if (false == $res) {
             $this->db->rollback();
             return parent::resWithErrMsg($modelUser->getMessages());
+        }
+
+        $config = $this->di->get('config');
+        $userRole['role_id'] = $config->role->User;
+        $userRole['user_id'] = $modelUser->id;
+
+        $roleUserModel = new RoleUser();
+        $res = $roleUserModel->create($userRole);
+        if (false == $res) {
+            $this->db->rollback();
+            return parent::resWithErrMsg($roleUserModel->getMessages());
         }
 
         $this->db->commit();

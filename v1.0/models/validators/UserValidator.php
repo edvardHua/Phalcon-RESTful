@@ -27,4 +27,21 @@ class UserValidator extends \Phalcon\Validation
         );
 
     }
+
+    public function validate($data = null, $entity = null)
+    {
+        $message = parent::validate($data, $entity);
+
+        if (0 != count($message))
+            return $message;
+
+        if (!empty($data['email'])) {
+            if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+                $this->appendMessage(new Message('The e-mail is not valid', 'email', 'Inclusion'));
+                return false;
+            }
+        }
+
+        return $this->getMessages();
+    }
 }

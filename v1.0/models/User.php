@@ -143,42 +143,6 @@ class User extends BaseModel
     }
 
     /**
-     * @return bool
-     */
-    public function validation()
-    {
-        $this->validate(
-            new Uniqueness(
-                array(
-                    "field" => "username",
-                    "message" => "The name must be unique"
-                )
-            )
-        );
-
-        $this->validate(new PresenceOf(
-            array(
-                "field" => 'username',
-                "message" => 'The username is required'
-            )
-        ));
-
-        $this->validate(new PresenceOf(
-            array(
-                "field" => 'password',
-                "message" => 'The password is required'
-            )
-        ));
-
-        // 验证是否失败
-        if ($this->validationHasFailed() == true) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
      * Allows to query a set of records that match the specified conditions
      *
      * @param mixed $parameters
@@ -221,27 +185,5 @@ class User extends BaseModel
         }
 
         return $user;
-    }
-
-    public function createUser($user)
-    {
-        $this->username = $user['username'];
-        if (!empty($user['password'])) {
-            $this->password = password_hash($user['password'], PASSWORD_DEFAULT);
-        }
-        $this->name = $user['name'];
-        $this->title = $user['title'];
-        if (!filter_var($user['email'], FILTER_VALIDATE_EMAIL)) {
-            $this->appendMessage(new Message('The email is incorrect', 'email', 'Inclusion'));
-            return false;
-        }
-        $this->email = $user['email'];
-
-        $res = $this->save();
-        if (false == $res) {
-            return $res;
-        }
-
-        return $res;
     }
 }
