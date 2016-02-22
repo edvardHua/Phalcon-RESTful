@@ -43,7 +43,7 @@ class BaseController extends Controller
      *                  {
      *                    "type": "Inclusion",
      *                    "field": "param_key",
-     *                    "message": "The param_key is incorrect"
+     *                    "message": "The param_key is not valid"
      *                  }
      *                ]
      *     }
@@ -241,7 +241,7 @@ class BaseController extends Controller
         $token->user_id = $userId;
 
         $config = $this->di->get('config');
-        switch($role){
+        switch ($role) {
             case $config->role->Admin:
                 $token->auth = 'Admin';
                 break;
@@ -276,12 +276,12 @@ class BaseController extends Controller
             session_id($token);
             $cacheToken = $this->session->get('token'); //从session中取得token
 
-            if (null == $cacheToken){
+            if (null == $cacheToken) {
                 $tokenModel = new Token(); // 避免缓存失效，再去数据库里面拿
-                $cacheToken = $tokenModel->findFirst("token='".$token."'");
-                if(false == $cacheToken)
+                $cacheToken = $tokenModel->findFirst("token='" . $token . "'");
+                if (false == $cacheToken)
                     return false;
-                else{
+                else {
                     $this->session->set('token', $token);  // 再次存进session中去
                 }
             }
@@ -289,12 +289,12 @@ class BaseController extends Controller
             $offset = time() - intval($cacheToken->expire);
 
             if ($offset > 0) { // 过期
-                $this->session->set('token',null);
+                $this->session->set('token', null);
                 return false;
             }
 
             if (!empty($cacheToken->logout_time)) { // 已经退出登录
-                $this->session->set('token',null);
+                $this->session->set('token', null);
                 return false;
             }
 
@@ -323,7 +323,8 @@ class BaseController extends Controller
     /**
      * @return mixed
      */
-    public function serverError(){
+    public function serverError()
+    {
         return self::response(array(
             'errors' => array(
                 array(
@@ -336,7 +337,8 @@ class BaseController extends Controller
     /**
      * @return mixed
      */
-    public function tokenError(){
+    public function tokenError()
+    {
         return self::response(array(
             'errors' => array(
                 array(
@@ -352,12 +354,39 @@ class BaseController extends Controller
      * @param $field
      * @return Response
      */
-    public function valueDuplicate($field){
+    public function valueDuplicate($field)
+    {
         return self::response(array(
             'errors' => array(
                 array(
                     'type' => 'Uniqueness',
                     'message' => 'Value duplicate.',
+                    'field' => $field
+                )
+            )
+        ), 406);
+    }
+
+    public function invalid($field, $value)
+    {
+        return self::response(array(
+            'errors' => array(
+                array(
+                    'type' => 'Inclusion',
+                    'message' => 'The ' . $value . ' is not valid',
+                    'field' => $field
+                )
+            )
+        ), 406);
+    }
+
+    public function required($field)
+    {
+        return self::response(array(
+            'errors' => array(
+                array(
+                    'type' => 'Inclusion',
+                    'message' => 'The '.$field.' is required',
                     'field' => $field
                 )
             )

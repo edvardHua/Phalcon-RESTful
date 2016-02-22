@@ -22,10 +22,10 @@ $acl->addRole(new Phalcon\Acl\Role('Guest'));
 $arrResources = [
     'User' => [
         'PublicController' => ['login', 'logout','register'],
-        'UserController' => ['getInfo', 'updateInfo']
+        'UserController' => ['getUser', 'updateUser']
     ],
     'Admin' => [
-        'AdminController' => ['getUser','delUser']
+        'AdminController' => ['getUser','deleteUser']
     ],
     'Guest' => [
         'PublicController' => ['login', 'logout','register']

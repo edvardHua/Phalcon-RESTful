@@ -29,12 +29,12 @@ router($app, 'Public', array(
 router($app, 'User', array(
     array(
         'method' => 'get',
-        'path' => '/user/{id}',
+        'path' => '/user',
         'action' => 'getUser'
     ),
     array(
         'method' => 'put',
-        'path' => '/user/{id}',
+        'path' => '/user',
         'action' => 'updateUser'
     )
 ), false);
@@ -42,12 +42,12 @@ router($app, 'User', array(
 router($app, 'Admin', array(
     array(
         'method' => 'get',
-        'path' => '/admin/user/{id}',
+        'path' => '/admin/user/{id:[0-9]+}',
         'action' => 'getUser'
     ),
     array(
         'method' => 'delete',
-        'path' => '/admin/user/{id}',
+        'path' => '/admin/user/{id:[0-9]+}',
         'action' => 'deleteUser'
     )
 ), false);

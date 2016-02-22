@@ -175,12 +175,12 @@ class User extends BaseModel
         $user = $this->findFirst("lower(username)='" . strtolower($username) . "'");
 
         if (false == $user) {
-            $this->appendMessage(new Message('The username is incorrect', 'username', 'Inclusion'));
+            $this->appendMessage(new Message('The username is invalid', 'username', 'Inclusion'));
             return false;
         }
 
         if (!password_verify($password, $user->password)) {
-            $this->appendMessage(new Message('The password is incorrect', 'password', 'Inclusion'));
+            $this->appendMessage(new Message('The password is invalid', 'password', 'Inclusion'));
             return false;
         }
 
