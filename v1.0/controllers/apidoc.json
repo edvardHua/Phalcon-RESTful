@@ -1,0 +1,12 @@
+{
+  "name": "Phalcon RESTful Server",
+  "version": "1.0.0",
+  "description": "Phalcon 框架的 RESTful Server 最佳实践",
+  "title": "Encounter API",
+  "url" : "http://example.com/",
+  "sampleUrl": "http://example/",
+  "template": {
+  	"withCompare": true,
+  	"withGenerator": true
+  }
+}
