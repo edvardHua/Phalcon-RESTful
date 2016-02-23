@@ -11,7 +11,7 @@ use Phalcon\Http\Response;
 class AdminController extends BaseController
 {
     /**
-     * @api {get} admin/user 获得全部用户信息
+     * @api {get} /admin/user 获得全部用户信息
      * @apiHeader {String} Accept=api-version=1.0 api版本
      * @apiHeaderExample {String} Header-Example:
      *     {
@@ -78,7 +78,7 @@ class AdminController extends BaseController
     }
 
     /**
-     * @api {get} admin/user/{id} 获得指定用户信息
+     * @api {get} /admin/user/{id} 获得指定用户信息
      * @apiUse header
      *
      * @apiName getUser

@@ -1,7 +1,7 @@
 [
   {
     "type": "get",
-    "url": "admin/user",
+    "url": "/admin/user",
     "title": "获得全部用户信息",
     "header": {
       "fields": {
@@ -79,7 +79,7 @@
   },
   {
     "type": "get",
-    "url": "admin/user/{id}",
+    "url": "/admin/user/{id}",
     "title": "获得指定用户信息",
     "name": "getUser",
     "group": "Admin",
@@ -235,7 +235,7 @@
     "groupTitle": "Token",
     "sampleRequest": [
       {
-        "url": "http://example//token"
+        "url": "http://example/token"
       }
     ],
     "error": {
@@ -292,7 +292,7 @@
     "groupTitle": "Token",
     "sampleRequest": [
       {
-        "url": "http://example//token"
+        "url": "http://example/token"
       }
     ],
     "header": {
@@ -426,7 +426,7 @@
     "groupTitle": "User",
     "sampleRequest": [
       {
-        "url": "http://example//admin/user/{id}"
+        "url": "http://example/admin/user/{id}"
       }
     ],
     "header": {
@@ -483,7 +483,7 @@
     "groupTitle": "User",
     "sampleRequest": [
       {
-        "url": "http://example//user"
+        "url": "http://example/user"
       }
     ],
     "header": {
@@ -590,7 +590,7 @@
     "groupTitle": "User",
     "sampleRequest": [
       {
-        "url": "http://example//user"
+        "url": "http://example/user"
       }
     ],
     "error": {
@@ -695,7 +695,7 @@
     "groupTitle": "User",
     "sampleRequest": [
       {
-        "url": "http://example//user"
+        "url": "http://example/user"
       }
     ],
     "header": {
