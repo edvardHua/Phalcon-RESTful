@@ -1,0 +1,206 @@
+{
+	"id": "15fc9d3b-b766-dd15-ef7a-7f3ee2861c95",
+	"name": "Phalcon-RESTful-Server",
+	"description": "",
+	"order": [
+		"4f154160-e434-06b8-71d8-ee44fbc1d6da",
+		"445875ad-f123-4f69-1775-281fbdc6ba1d",
+		"e3444428-ba16-6c34-8653-6d051b1aff2a",
+		"e1e43a68-039e-e391-381a-c42bd0bbb120",
+		"afac04f3-d45a-8da4-cbac-4d49ae94d0db",
+		"d551729d-4825-d7d7-56a4-dc3e45ac9a16",
+		"6a194e06-d092-4033-1e14-b0aa02250e7b"
+	],
+	"folders": [],
+	"timestamp": 1453114317296,
+	"owner": "107539",
+	"remoteLink": "",
+	"public": false,
+	"requests": [
+		{
+			"id": "445875ad-f123-4f69-1775-281fbdc6ba1d",
+			"headers": "Accept: api-version=1.0\n",
+			"url": "{{base_path}}/token?XDEBUG_SESSION_START=18460",
+			"preRequestScript": "",
+			"pathVariables": {},
+			"method": "POST",
+			"data": [
+				{
+					"key": "username",
+					"value": "MCAA2015",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "password",
+					"value": "12345678",
+					"type": "text",
+					"enabled": true
+				}
+			],
+			"dataMode": "params",
+			"version": 2,
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1455980912842,
+			"name": "登录",
+			"description": "",
+			"collectionId": "15fc9d3b-b766-dd15-ef7a-7f3ee2861c95",
+			"responses": []
+		},
+		{
+			"id": "4f154160-e434-06b8-71d8-ee44fbc1d6da",
+			"headers": "Accept: api-version=1.0\n",
+			"url": "{{base_path}}/user?devDebug=true",
+			"preRequestScript": "",
+			"pathVariables": {},
+			"method": "POST",
+			"data": [
+				{
+					"key": "username",
+					"value": "Test1",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "password",
+					"value": "12345678",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "name",
+					"value": "Edvard",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "organization",
+					"value": "Unknow",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "title",
+					"value": "Software Enginner",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "email",
+					"value": "tes@qq.com",
+					"type": "text",
+					"enabled": true
+				}
+			],
+			"dataMode": "params",
+			"version": 2,
+			"tests": "tests['Status code is 200'] = responseCode.code === 200;\nvar jsonData = JSON.parse(responseBody);\npostman.setEnvironmentVariable(\"token\", jsonData.token);",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1456197695154,
+			"name": "注册",
+			"description": "",
+			"collectionId": "15fc9d3b-b766-dd15-ef7a-7f3ee2861c95",
+			"responses": []
+		},
+		{
+			"id": "6a194e06-d092-4033-1e14-b0aa02250e7b",
+			"headers": "Accept: api-version=1.0\ntoken: {{token}}\n",
+			"url": "{{base_path}}/admin/user/5?XDEBUG_SESSION_START=16263",
+			"preRequestScript": "",
+			"pathVariables": {},
+			"method": "DELETE",
+			"data": [],
+			"dataMode": "params",
+			"version": 2,
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1456129054502,
+			"name": "删除某个用户",
+			"description": "",
+			"collectionId": "15fc9d3b-b766-dd15-ef7a-7f3ee2861c95",
+			"responses": []
+		},
+		{
+			"id": "afac04f3-d45a-8da4-cbac-4d49ae94d0db",
+			"headers": "Accept: api-version=1.0\ntoken: {{token}}\n",
+			"url": "{{base_path}}/user?XDEBUG_SESSION_START=14640&organization=WTF&name=Lucky",
+			"preRequestScript": "",
+			"pathVariables": {},
+			"method": "PUT",
+			"data": [],
+			"dataMode": "params",
+			"version": 2,
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1456127593186,
+			"name": "更新当前登录用户信息",
+			"description": "",
+			"collectionId": "15fc9d3b-b766-dd15-ef7a-7f3ee2861c95",
+			"responses": []
+		},
+		{
+			"id": "d551729d-4825-d7d7-56a4-dc3e45ac9a16",
+			"headers": "Accept: api-version=1.0\ntoken: {{token}}\n",
+			"url": "{{base_path}}/admin/user",
+			"pathVariables": {},
+			"preRequestScript": "",
+			"method": "GET",
+			"collectionId": "15fc9d3b-b766-dd15-ef7a-7f3ee2861c95",
+			"data": [],
+			"dataMode": "params",
+			"name": "获得某个/全部用户信息",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1456128778625,
+			"version": 2,
+			"responses": [],
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {}
+		},
+		{
+			"id": "e1e43a68-039e-e391-381a-c42bd0bbb120",
+			"headers": "Accept: api-version=1.0\ntoken: {{token}}\n",
+			"url": "{{base_path}}/user",
+			"pathVariables": {},
+			"preRequestScript": "",
+			"method": "GET",
+			"collectionId": "15fc9d3b-b766-dd15-ef7a-7f3ee2861c95",
+			"data": [],
+			"dataMode": "params",
+			"name": "获得当前登录用户信息",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1456125196885,
+			"version": 2,
+			"responses": [],
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {}
+		},
+		{
+			"id": "e3444428-ba16-6c34-8653-6d051b1aff2a",
+			"headers": "Accept: api-version=1.0\ntoken: {{token}}\n",
+			"url": "{{base_path}}/token",
+			"preRequestScript": "",
+			"pathVariables": {},
+			"method": "DELETE",
+			"data": [],
+			"dataMode": "params",
+			"version": 2,
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1456020815268,
+			"name": "登出",
+			"description": "",
+			"collectionId": "15fc9d3b-b766-dd15-ef7a-7f3ee2861c95",
+			"responses": []
+		}
+	]
+}
