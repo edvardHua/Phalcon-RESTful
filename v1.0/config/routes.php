@@ -21,7 +21,7 @@ router($app, 'Public', array(
     ),
     array(
         'method' => 'post',
-        'path' => '/register',
+        'path' => '/user',
         'action' => 'register'
     )
 ), false);
@@ -40,6 +40,11 @@ router($app, 'User', array(
 ), false);
 
 router($app, 'Admin', array(
+    array(
+        'method' => 'get',
+        'path' => '/admin/user',
+        'action' => 'getUsers'
+    ),
     array(
         'method' => 'get',
         'path' => '/admin/user/{id:[0-9]+}',

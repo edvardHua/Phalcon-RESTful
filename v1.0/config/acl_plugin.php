@@ -25,7 +25,9 @@ $arrResources = [
         'UserController' => ['getUser', 'updateUser']
     ],
     'Admin' => [
-        'AdminController' => ['getUser','deleteUser']
+        'AdminController' => ['getUsers','getUser','deleteUser'],
+        'PublicController' => ['login', 'logout','register'],
+        'UserController' => ['getUser', 'updateUser']
     ],
     'Guest' => [
         'PublicController' => ['login', 'logout','register']

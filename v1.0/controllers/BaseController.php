@@ -14,6 +14,7 @@ class BaseController extends Controller
      * @apiHeaderExample {String} Header-Example:
      *     {
      *       "Accept": "api-version=1.0"
+     *       "token": xxx
      *     }
      */
 

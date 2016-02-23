@@ -36,7 +36,6 @@ class PublicController extends BaseController
      */
     public function login()
     {
-
         $username = $this->request->getPost('username');
         $password = $this->request->getPost('password');
 
@@ -67,6 +66,18 @@ class PublicController extends BaseController
         ));
     }
 
+    /**
+     * @api {post} /token 登录获得token
+     * @apiUse header
+     *
+     * @apiName logout
+     * @apiGroup Token
+     * @apiVersion 1.0.0
+     *
+     * @apiSuccess {Array} empty_array 空数组，无实际意义
+     *
+     * @apiUse errorExample
+     */
     public function logout()
     {
         $token = $this->session->get('token');
@@ -86,6 +97,21 @@ class PublicController extends BaseController
         return parent::success();
     }
 
+    /**
+     * @api {post} /user 注册接口
+     * @apiHeader {String} Accept=api-version=1.0 api版本
+     * @apiHeaderExample {String} Header-Example:
+     *     {
+     *       "Accept": "api-version=1.0"
+     *     }
+     * @apiName register
+     * @apiGroup User
+     * @apiVersion 1.0.0
+     *
+     * @apiSuccess {Array} empty_array 空数组
+     *
+     * @apiUse errorExample
+     */
     public function register()
     {
         $this->db->begin();
