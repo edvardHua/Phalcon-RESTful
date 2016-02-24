@@ -38,7 +38,6 @@ class UserValidator extends \Phalcon\Validation
         if (!empty($data['email'])) {
             if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
                 $this->appendMessage(new Message('The e-mail is not valid', 'email', 'Inclusion'));
-                return false;
             }
         }
 
